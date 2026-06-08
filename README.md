@@ -1,7 +1,3 @@
-<div align="center">
-
-<img src="https://i.imgur.com/placeholder.png" alt="CinemaXXV Logo" width="200"/>
-
 # 🎬 CinemaXXV
 ### *Movie Ticket Reservation System*
 
