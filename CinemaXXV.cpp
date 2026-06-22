@@ -424,3 +424,202 @@ int signIn() {
     }
     return 0;
 }
+
+// ===================== MANAJEMEN FILM =====================
+
+void tampilFilm() {
+    if (jumlahFilm == 0) { cout << MERAH << "\nBelum ada film.\n" << RESET; return; }
+    garis();
+    cout << left << setw(8)  << "ID"
+                 << MERAH_JAMBU << setw(20) << "Judul" << RESET
+                 << COKLAT   << setw(10) << "Genre"  << RESET
+                 << UNGU     << setw(8)  << "Durasi" << RESET
+                 << TOSCA    << setw(8)  << "Usia"   << RESET
+                 << BIRU     << "Harga"              << RESET << endl;
+    garis();
+    for (int i = 0; i < jumlahFilm; i++)
+        cout << left << setw(8)  << film[i].id
+                     << setw(20) << film[i].judul
+                     << setw(10) << film[i].genre
+                     << setw(8)  << film[i].durasi
+                     << setw(8)  << film[i].rating
+                     << film[i].harga << endl;
+    garis();
+}
+
+string pilihGenre(string judul) {
+    string genreList[5] = {"Action", "Horror", "Comedy", "Drama", "Animasi"};
+    return genreList[pilihMenu(judul, genreList, 5)];
+}
+
+string pilihRating(string judul) {
+    string ratingList[4] = {"SU", "13+", "17+", "21+"};
+    return ratingList[pilihMenu(judul, ratingList, 4)];
+}
+
+void tambahFilm() {
+    header("    T A M B A H  F I L M");
+    if (jumlahFilm >= MAX_FILM) {
+        cout << MERAH << "\nData film penuh, tidak bisa menambah film baru.\n" << RESET;
+        pause(); return;
+    }
+
+    Film f;
+    cout << MERAH << "(ketik 'exit' untuk batal)\n" << RESET;
+
+    // ID Film dibuat otomatis (auto increment), tidak perlu input manual.
+    f.id = idFilmBerikutnya;
+    cout << "\nID Film    : " << f.id << " (otomatis)\n";
+
+    // Input Judul
+    do {
+        cout << "Judul Film : "; getline(cin >> ws, f.judul);
+        if (toLower(f.judul) == "exit") { cout << "\nDibatalkan.\n"; pause(); return; }
+        else if (f.judul.empty()) cout << MERAH << "Judul tidak boleh kosong.\n" << RESET;
+    } while (f.judul.empty());
+
+    f.genre  = pilihGenre("PILIH GENRE");
+    f.rating = pilihRating("PILIH RATING USIA");
+
+    header("    T A M B A H  F I L M");
+    cout << "\nID Film    : " << f.id    << endl;
+    cout << "Judul Film : " << f.judul  << endl;
+    cout << "Genre      : " << f.genre  << endl;
+    cout << "Rating     : " << f.rating << endl;
+
+    f.durasi = inputAngka("\nDurasi (40-360 menit)      : ", 40, 360);
+    if (f.durasi == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
+
+    int hargaInt = inputAngka("Harga Tiket (25000-300000) : ", 25000, 300000);
+    if (hargaInt == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
+    f.harga = (float)hargaInt;
+
+    f.stok = TOTAL_KURSI; f.terjual = 0;
+    film[jumlahFilm++] = f;
+    idFilmBerikutnya++;
+    cout << HIJAU_TERANG << "\nFilm berhasil ditambahkan.\n" << RESET;
+    pause();
+}
+
+void editFilm() {
+    header("    E D I T  F I L M");
+    tampilFilm();
+    if (jumlahFilm == 0) { pause(); return; }
+
+    cout << MERAH << "(ketik 'exit' untuk batal)\n" << RESET;
+    int id, indeks;
+    do {
+        id = inputID("\nMasukkan ID Film : ");
+        if (id == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
+
+        indeks = cariFilm(id);
+        if (indeks == -1)
+            cout << MERAH << "Film dengan ID tersebut tidak ditemukan, silakan coba lagi.\n" << RESET;
+    } while (indeks == -1);
+
+    string judulBaru;
+    do {
+        cout << "Judul Baru : "; getline(cin >> ws, judulBaru);
+        if (toLower(judulBaru) == "exit") { cout << "\nDibatalkan, data film tidak diubah.\n"; pause(); return; }
+        if (judulBaru.empty()) cout << MERAH << "Judul tidak boleh kosong.\n" << RESET;
+    } while (judulBaru.empty());
+
+    string genreBaru  = pilihGenre("PILIH GENRE BARU");
+    string ratingBaru = pilihRating("PILIH RATING USIA BARU");
+
+    header("    E D I T  F I L M");
+
+    int durasiBaru = inputAngka("\nDurasi Baru (40-360 menit)      : ", 40, 360);
+    if (durasiBaru == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
+
+    int hargaBaruInt = inputAngka("Harga Baru (25000-300000) : ", 25000, 300000);
+    if (hargaBaruInt == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
+
+    film[indeks].judul  = judulBaru;  film[indeks].genre  = genreBaru;
+    film[indeks].rating = ratingBaru; film[indeks].durasi = durasiBaru;
+    film[indeks].harga  = (float)hargaBaruInt;
+    // Stok dihitung ulang dari tiket yang sudah terjual, jangan langsung
+    // di-reset ke TOTAL_KURSI, agar tiket yang sudah terjual tidak hilang.
+    film[indeks].stok = TOTAL_KURSI - film[indeks].terjual;
+
+    cout << HIJAU_TERANG << "\nFilm berhasil diubah.\n" << RESET;
+    pause();
+}
+
+void hapusFilm() {
+    header("    H A P U S  F I L M");
+    tampilFilm();
+    if (jumlahFilm == 0) { pause(); return; }
+
+    cout << MERAH << "(ketik 'exit' untuk batal)\n" << RESET;
+    int id, indeks;
+    do {
+        id = inputID("\nMasukkan ID Film : ");
+        if (id == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
+
+        indeks = cariFilm(id);
+        if (indeks == -1)
+            cout << MERAH << "Film dengan ID tersebut tidak ditemukan, silakan coba lagi.\n" << RESET;
+    } while (indeks == -1);
+
+    bool dipakai = false;
+    for (int i = 0; i < jumlahJadwal; i++)
+        if (jadwal[i].film == indeks) { dipakai = true; break; }
+    if (dipakai) {
+        cout << MERAH << "\nFilm masih digunakan pada suatu jadwal, hapus jadwalnya terlebih dahulu.\n" << RESET;
+        pause(); return;
+    }
+
+    for (int i = indeks; i < jumlahFilm - 1; i++) film[i] = film[i + 1];
+    jumlahFilm--;
+    for (int i = 0; i < jumlahJadwal; i++)
+        if (jadwal[i].film > indeks) jadwal[i].film--;
+
+    cout << HIJAU_TERANG << "\nFilm berhasil dihapus.\n" << RESET;
+    pause();
+}
+
+void tampilFilmTerjual() {
+    if (jumlahFilm == 0) { cout << MERAH << "\nBelum ada film.\n" << RESET; return; }
+    int urut[MAX_FILM];
+    for (int i = 0; i < jumlahFilm; i++) urut[i] = i;
+    for (int i = 0; i < jumlahFilm - 1; i++)
+        for (int j = i + 1; j < jumlahFilm; j++)
+            if (film[urut[j]].terjual > film[urut[i]].terjual) {
+                int tmp = urut[i]; urut[i] = urut[j]; urut[j] = tmp;
+            }
+    garis();
+    cout << left << setw(8)  << "ID"
+                 << MERAH_JAMBU << setw(20) << "Judul" << RESET
+                 << COKLAT   << setw(10) << "Genre"  << RESET
+                 << UNGU     << setw(8)  << "Durasi" << RESET
+                 << TOSCA    << setw(8)  << "Usia"   << RESET
+                 << BIRU     << setw(10) << "Harga"  << RESET
+                 << HIJAU_TERANG << "Terjual" << RESET << endl;
+    garis();
+    for (int i = 0; i < jumlahFilm; i++) {
+        int k = urut[i];
+        cout << left << setw(8)  << film[k].id
+                     << setw(20) << film[k].judul
+                     << setw(10) << film[k].genre
+                     << setw(8)  << film[k].durasi
+                     << setw(8)  << film[k].rating
+                     << setw(10) << film[k].harga
+                     << film[k].terjual << endl;
+    }
+    garis();
+}
+
+void menuFilm() {
+    string opsi[5] = {"Tambah Film", "Edit Film", "Hapus Film", "Lihat Film", "Kembali"};
+    int pilihan;
+    do {
+        pilihan = pilihMenu(" M A N A J E M E N  F I L M", opsi, 5);
+        switch (pilihan) {
+            case 0: tambahFilm(); break;
+            case 1: editFilm();   break;
+            case 2: hapusFilm();  break;
+            case 3: header("    D A F T A R  F I L M"); tampilFilmTerjual(); pause(); break;
+        }
+    } while (pilihan != 4);
+}
