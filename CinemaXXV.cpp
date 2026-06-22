@@ -213,3 +213,88 @@ int inputID(string prompt) {
     }
     return nilai;
 }
+
+// ===================== MENU INTERAKTIF =====================
+
+int pilihMenu(string judul, string opsi[], int jumlahOpsi) {
+    const int LEBAR_KONSOL = 60;
+    int panjangMaks = 0;
+    for (int i = 0; i < jumlahOpsi; i++)
+        if ((int)opsi[i].length() > panjangMaks)
+            panjangMaks = opsi[i].length();
+
+    int lebarBlok = 4 + panjangMaks;
+    int padKiri   = (LEBAR_KONSOL - lebarBlok) / 2;
+    if (padKiri < 0) padKiri = 0;
+    string spasi = string(padKiri, ' ');
+
+    int pilihan = 0, tombolKeyboard;
+    do {
+        header(judul);
+        cout << "Gunakan panah Atas/Bawah, Enter untuk pilih\n";
+        garis();
+        for (int i = 0; i < jumlahOpsi; i++) {
+            if (i == pilihan)
+                cout << spasi << UNGU << " >> " << opsi[i] << RESET << endl;
+            else
+                cout << spasi << "    " << opsi[i] << endl;
+        }
+        garis();
+
+        tombolKeyboard = getch();
+        if (tombolKeyboard == 224) {
+            tombolKeyboard = getch();
+            if (tombolKeyboard == 72)      pilihan = (pilihan - 1 + jumlahOpsi) % jumlahOpsi;
+            else if (tombolKeyboard == 80) pilihan = (pilihan + 1) % jumlahOpsi;
+        }
+    } while (tombolKeyboard != 13);
+    return pilihan;
+}
+
+// ===================== SEARCHING =====================
+
+int cariUser(string usn) {
+    for (int i = 0; i < jumlahUser; i++)
+        if (toLower(user[i].username) == toLower(usn)) return i;
+    return -1;
+}
+
+int cariFilm(int id) {
+    for (int i = 0; i < jumlahFilm; i++)
+        if (film[i].id == id) return i;
+    return -1;
+}
+
+int cariJadwal(int id) {
+    for (int i = 0; i < jumlahJadwal; i++)
+        if (jadwal[i].id == id) return i;
+    return -1;
+}
+
+int cariPromo(string kode) {
+    for (int i = 0; i < jumlahPromo; i++)
+        if (toLower(promo[i].kode) == toLower(kode)) return i;
+    return -1;
+}
+
+// ===================== CEK BENTROK JADWAL =====================
+
+bool cekBentrok(int studio, string tanggal, int waktuMulaiBaru, int waktuSelesaiBaru, int kecuali) {
+    for (int i = 0; i < jumlahJadwal; i++) {
+        if (i == kecuali) continue;
+        if (jadwal[i].studio == studio && jadwal[i].tanggal == tanggal)
+            if (waktuMulaiBaru < jadwal[i].selesai && jadwal[i].mulai < waktuSelesaiBaru)
+                return true;
+    }
+    return false;
+}
+
+// ===================== POINTER =====================
+
+void hitungTotal(float *totalPendapatan, int *totalTiket) {
+    *totalPendapatan = 0; *totalTiket = 0;
+    for (int i = 0; i < jumlahTransaksi; i++) {
+        *totalPendapatan += transaksi[i].total;
+        *totalTiket      += transaksi[i].jumlahTiket;
+    }
+}
