@@ -298,3 +298,129 @@ void hitungTotal(float *totalPendapatan, int *totalTiket) {
         *totalTiket      += transaksi[i].jumlahTiket;
     }
 }
+
+// ===================== UTILITAS JAM =====================
+
+int jamKeMenit(string jam) {
+    for (int i = 0; i < (int)jam.length(); i++)
+        if (jam[i] == ':') jam[i] = '.';
+    int pos = jam.find('.');
+    if (pos == (int)string::npos || pos == 0 || pos >= (int)jam.length() - 1) return -1;
+    string hStr = jam.substr(0, pos), mStr = jam.substr(pos + 1);
+    bool valT = true;
+    for (char c : hStr) if (!isdigit(c)) valT = false;
+    for (char c : mStr) if (!isdigit(c)) valT = false;
+    if (!valT || hStr.length() > 2 || mStr.length() > 2) return -1;
+    return stoi(hStr) * 60 + stoi(mStr);
+}
+
+string menitKeJam(int menit) {
+    int jamH = (menit / 60) % 24;
+    int jamM = menit % 60;
+    return (jamH < 10 ? "0" : "") + to_string(jamH) + "." +
+           (jamM < 10 ? "0" : "") + to_string(jamM);
+}
+
+int maxHariBulan(int bln, int thn = 2026) {
+    int hari[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (bln == 2 && (thn % 4 == 0 && (thn % 100 != 0 || thn % 400 == 0))) hari[2] = 29;
+    return hari[bln];
+}
+
+// Meminta input tanggal (bulan + tanggal) dan jam mulai, lalu mengisinya ke parameter output.
+// Jika user mengetik 'exit', bln akan bernilai -1 sebagai tanda pembatalan.
+void inputTanggalDanJam(int &bln, int &tgl, int &jamH, int &jamM) {
+    int thn = 2026;
+    cout << "Tahun             : 2026\n";
+
+    bln = inputAngka("Bulan (6-12)      : ", 6, 12, "Bulan yang tersedia hanya Juni-Desember.");
+    if (bln == -1) return;
+
+    int maxHari = maxHariBulan(bln, thn);
+    int minHari = (bln == 6) ? 23 : 1;
+    string promptTgl = (bln == 6)
+        ? "Tanggal (" + to_string(minHari) + "-" + to_string(maxHari) + ")  : "
+        : "Tanggal (1-" + to_string(maxHari) + ")     : ";
+    string errorTgl = (bln == 6)
+        ? "Jadwal hanya dapat dibuat mulai 23 Juni 2026."
+        : "Tanggal tidak sesuai dengan jumlah hari pada bulan yang dipilih.";
+
+    tgl = inputAngka(promptTgl, minHari, maxHari, errorTgl);
+    if (tgl == -1) { bln = -1; return; }
+
+    cout << "\n-- Masukkan Jam Mulai --\n";
+    jamH = inputAngka("Jam (0-23)   : ", 0, 23);
+    if (jamH == -1) { bln = -1; return; }
+
+    jamM = inputAngka("Menit (0-59) : ", 0, 59);
+    if (jamM == -1) { bln = -1; return; }
+}
+
+// ===================== SIGN UP & SIGN IN =====================
+
+void signUp() {
+    header("    S I G N  U P");
+    if (jumlahUser >= MAX_USER) {
+        cout << MERAH << "\nData user penuh, sign up tidak dapat dilakukan.\n" << RESET;
+        pause(); return;
+    }
+
+    string username, password;
+    cout << MERAH << "(ketik 'exit' untuk batal)\n" << RESET;
+
+    do {
+        cout << "\nUsername : ";
+        getline(cin >> ws, username);
+        if (toLower(username) == "exit") { cout << "\nSign up dibatalkan.\n"; pause(); return; }
+
+        if (username.empty())
+            cout << MERAH << "Username tidak boleh kosong.\n" << RESET;
+        else if (toLower(username) == toLower(adminUsn))
+            cout << MERAH << "Username tidak boleh sama dengan akun admin, gunakan username lain.\n" << RESET;
+        else if (cariUser(username) != -1)
+            cout << MERAH << "Username sudah digunakan, gunakan username lain.\n" << RESET;
+    } while (username.empty() || toLower(username) == toLower(adminUsn) || cariUser(username) != -1);
+
+    do {
+        cout << "Password : ";
+        getline(cin >> ws, password);
+        if (toLower(password) == "exit") { cout << "\nSign up dibatalkan.\n"; pause(); return; }
+        if (password.empty()) cout << MERAH << "Password tidak boleh kosong.\n" << RESET;
+    } while (password.empty());
+
+    user[jumlahUser].username = username;
+    user[jumlahUser].password = password;
+    jumlahUser++;
+
+    cout << HIJAU_TERANG << "\nAkun berhasil dibuat.\n" << RESET;
+    pause();
+}
+
+int signIn() {
+    header("    S I G N  I N");
+    string username, password;
+    cout << MERAH << "(ketik 'exit' untuk batal)\n" << RESET;
+
+    while (true){
+        cout << "\nUsername : "; cin >> username;
+        if (toLower(username) == "exit") { cout << "\nSign in dibatalkan.\n"; pause(); return 0; }
+
+        cout << "Password : "; cin >> password;
+        if (toLower(password) == "exit") { cout << "\nSign in dibatalkan.\n"; pause(); return 0; }
+
+        if (username == adminUsn && password == adminPsw) {
+            cout << HIJAU_TERANG << "\nLogin admin berhasil.\n" << RESET;
+            pause(); return 1;
+        }
+
+        int indeks = cariUser(username);
+        if (indeks != -1 && user[indeks].password == password) {
+            indeksUserAktif = indeks;
+            cout << HIJAU_TERANG << "\nSelamat datang, " << user[indeks].username << "!\n" << RESET;
+            pause(); return 2;
+        }
+
+        cout << MERAH << "\nUsername atau password salah, silakan coba lagi.\n" << RESET;
+    }
+    return 0;
+}
