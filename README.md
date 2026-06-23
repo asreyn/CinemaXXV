@@ -1,15 +1,56 @@
 <div align="center">
 
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0F0C29,50:302B63,100:F75C7E&height=200&section=header&animation=fadeIn" width="100%"/>
+
+<br/>
+
+<img src="assets/LOGO%20FIX%202.png" alt="CinemaXXV Logo" width="1020"/>
+
+<br/><br/>
+
 # 🎬 CinemaXXV
 
 ### Sistem Reservasi Tiket Bioskop — Console App (C++)
 
-![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Windows%20Console-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
-![Kelompok](https://img.shields.io/badge/Kelompok-20-orange?style=for-the-badge)
+<sub>★彡 CONSOLE-BASED CINEMA RESERVATION ENGINE 彡★</sub>
 
-*Pesan tiket bioskop favoritmu langsung dari terminal — pilih film, pilih kursi, bayar lewat QRIS, cetak tiket. Semua dari console.*
+<br/><br/>
+
+<p>
+  <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20Console-0078D6?style=for-the-badge&logo=windows&logoColor=white" />
+  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Kelompok-20-orange?style=for-the-badge" />
+</p>
+<p>
+  <img src="https://img.shields.io/badge/Build-g%2B%2B%20%2F%20MinGW-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/No%20Database-Pure%20Memory-9146FF?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Payment-QRIS%20Dummy-00C853?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Made%20with-%E2%9D%A4-ff69b4?style=for-the-badge" />
+</p>
+
+<br/>
+
+> *"Pesan tiket bioskop favoritmu langsung dari terminal — pilih film, pilih kursi, bayar lewat QRIS, cetak tiket. Semua dari console, semua dalam genggaman keyboard."* 🍿🎬
+
+<br/>
+
+```
+===========================================================
+** CinemaXXV — Where The Terminal Becomes The Big Screen **
+===========================================================
+```
+
+<br/>
+
+<p>
+  <a href="#-pratinjau-tampilan"><img src="https://img.shields.io/badge/▶-Lihat_Pratinjau-FF4B4B?style=for-the-badge&logoColor=white" /></a>
+  <a href="#%EF%B8%8F-cara-menjalankan"><img src="https://img.shields.io/badge/⚙-Cara_Menjalankan-4B7BFF?style=for-the-badge&logoColor=white" /></a>
+  <a href="#-fitur-utama"><img src="https://img.shields.io/badge/✨-Lihat_Fitur-9146FF?style=for-the-badge&logoColor=white" /></a>
+  <a href="#-anggota-kelompok"><img src="https://img.shields.io/badge/👥-Tim_Kami-00C853?style=for-the-badge&logoColor=white" /></a>
+</p>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:F75C7E,100:0F0C29&height=3&section=header" width="100%"/>
 
 </div>
 
@@ -34,17 +75,49 @@
 
 > 💡 **Kenapa menarik?** Semua dikerjakan tanpa database eksternal — murni array & struct di memori, dengan validasi input yang cukup ketat (bentrok jadwal, kursi duplikat, kode promo, dll).
 
+<div align="center">
+
+| 🎞️ Tanpa Database | 🪑 Kursi Visual Interaktif | 💳 QRIS Dummy | 🧾 Cetak Tiket Otomatis |
+|:---:|:---:|:---:|:---:|
+| Murni array & struct | Layout 5×8 real-time | Simulasi pembayaran | ID & kode tiket auto-generate |
+
+<br/>
+
+<img src="https://img.shields.io/badge/3-Studio-1e1e2f?style=flat-square&labelColor=F75C7E" height="28"/>
+<img src="https://img.shields.io/badge/40-Kursi%20per%20Studio-1e1e2f?style=flat-square&labelColor=F75C7E" height="28"/>
+<img src="https://img.shields.io/badge/20-Slot%20Film-1e1e2f?style=flat-square&labelColor=F75C7E" height="28"/>
+<img src="https://img.shields.io/badge/30-Slot%20Jadwal-1e1e2f?style=flat-square&labelColor=F75C7E" height="28"/>
+<img src="https://img.shields.io/badge/50-Slot%20Transaksi-1e1e2f?style=flat-square&labelColor=F75C7E" height="28"/>
+<img src="https://img.shields.io/badge/4-Rating%20Usia-1e1e2f?style=flat-square&labelColor=F75C7E" height="28"/>
+
+</div>
+
 ---
 
 ## ✨ Fitur Utama
 
-<details>
+<details open>
 <summary><b>🔐 Autentikasi (Sign Up / Sign In)</b></summary>
 <br>
 
 - Sign Up dengan validasi: username tidak boleh kosong, mengandung spasi, sama dengan `admin`, atau duplikat
 - Sign In mendukung akun **admin tetap** maupun **customer terdaftar**
 - Bisa membatalkan input kapan saja dengan mengetik `exit`
+
+<div align="center">
+<table>
+<tr>
+<td><img src="assets/SIGN%20UP.png" alt="Sign Up" width="380"/></td>
+<td><img src="assets/SIGN%20IN%20CUS.png" alt="Sign In Customer" width="380"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Sign Up</sub></td>
+<td align="center"><sub>Sign In — Customer</sub></td>
+</tr>
+</table>
+<img src="assets/SIGN%20IN%20ADMIN.png" alt="Sign In Admin" width="380"/>
+<br><sub>Sign In — Admin</sub>
+</div>
 
 </details>
 
@@ -59,6 +132,26 @@
 | 🏷️ **Manajemen Promo** | Tambah kode promo unik, atur diskon 1–100%, aktif/nonaktifkan, hapus |
 | 📊 **Laporan Penjualan** | Total tiket terjual, total transaksi, total pendapatan, daftar transaksi |
 
+<div align="center">
+<img src="assets/MENU%20ADMIN.png" alt="Menu Admin" width="420"/>
+<br><sub>Menu Utama Admin</sub>
+<br><br>
+<table>
+<tr>
+<td><img src="assets/MANAJEMEN%20FILM.png" alt="Manajemen Film" width="280"/></td>
+<td><img src="assets/MANAJEMEN%20JADWAL.png" alt="Manajemen Jadwal" width="280"/></td>
+<td><img src="assets/MANAJEMEN%20PROMO.png" alt="Manajemen Promo" width="280"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Manajemen Film</sub></td>
+<td align="center"><sub>Manajemen Jadwal</sub></td>
+<td align="center"><sub>Manajemen Promo</sub></td>
+</tr>
+</table>
+<img src="assets/LAPORAN%20PENJUALAN.png" alt="Laporan Penjualan" width="420"/>
+<br><sub>Laporan Penjualan</sub>
+</div>
+
 </details>
 
 <details>
@@ -70,6 +163,34 @@
 - **Pembayaran** — ringkasan pesanan → input kode promo (opsional) → tampilan QR dummy → konfirmasi → ID transaksi & kode tiket otomatis
 - **Cetak Tiket** — tampilkan detail tiket dari transaksi terakhir
 - **Riwayat Pemesanan** — semua transaksi milik user yang sedang login
+
+<div align="center">
+<img src="assets/MENU%20CUSTOMER.png" alt="Menu Customer" width="420"/>
+<br><sub>Menu Utama Customer</sub>
+<br><br>
+<table>
+<tr>
+<td><img src="assets/BERANDA%20CUSTOMER.png" alt="Beranda Customer" width="280"/></td>
+<td><img src="assets/RESERVASI%20KURSI.png" alt="Reservasi Kursi" width="280"/></td>
+<td><img src="assets/PEMBAYARAN.png" alt="Pembayaran" width="280"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Beranda</sub></td>
+<td align="center"><sub>Reservasi & Pilih Kursi</sub></td>
+<td align="center"><sub>Pembayaran QRIS</sub></td>
+</tr>
+</table>
+<table>
+<tr>
+<td><img src="assets/CETAK%20TIKET.png" alt="Cetak Tiket" width="280"/></td>
+<td><img src="assets/RIWAYAT.png" alt="Riwayat Pemesanan" width="280"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Cetak Tiket</sub></td>
+<td align="center"><sub>Riwayat Pemesanan</sub></td>
+</tr>
+</table>
+</div>
 
 </details>
 
@@ -104,6 +225,8 @@ flowchart TD
 
 ---
 
+<div align="center">
+
 ## 📐 Batasan & Aturan Data
 
 | Aspek | Aturan |
@@ -125,6 +248,10 @@ flowchart TD
 | Metode Bayar | QRIS (visual dummy, simulasi) |
 
 ---
+
+<br/>
+
+</div>
 
 ## ⚙️ Cara Menjalankan
 
@@ -174,26 +301,47 @@ Akun customer dibuat sendiri melalui menu **Sign Up**.
   Keterangan: [O] Tersedia   [X] Terisi
 ```
 
+<div align="center">
+<img src="assets/RESERVASI%20KURSI.png" alt="Reservasi Kursi Preview" width="500"/>
+</div>
+
 </details>
 
 ---
 
 ## 👥 Anggota Kelompok
 
+<div align="center">
+
+<sub>★彡 KELOMPOK 20 彡★</sub>
+
 | Nama | NIM |
-|---|---|
-| I Putu Reynanda Putra Dynatha | F1D02510115 |
-| Lalu Reza Pramandika | F1D02510013 |
-| Naira Almira | F1D02510085 |
-| Silva Sazkia Damayanti | F1D02510026 |
-| Alya Zulfadila | F1D02510102 |
-| Putri Riyona Ibtisaamah | F1D02510131 |
-| Yohanes Ibrani | F1D02510142 |
+|:---|:---:|
+| 🎬 I Putu Reynanda Putra Dynatha | `F1D02510115` |
+| 🎬 Lalu Reza Pramandika | `F1D02510013` |
+| 🎬 Naira Almira | `F1D02510085` |
+| 🎬 Silva Sazkia Damayanti | `F1D02510026` |
+| 🎬 Alya Zulfadila | `F1D02510102` |
+| 🎬 Putri Riyona Ibtisaamah | `F1D02510131` |
+| 🎬 Yohanes Ibrani | `F1D02510142` |
+
+</div>
+
+<br/>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:F75C7E,100:0F0C29&height=3&section=header" width="100%"/>
 
 <div align="center">
 
----
+### 🎥 Dibuat dengan ❤️ oleh **Kelompok 20** — CinemaXXV 🍿
 
-Dibuat dengan ❤️ oleh **Kelompok 20** — CinemaXXV 🎬🍿
+<sub>⭐ Jangan lupa beri star kalau proyek ini membantu! ⭐</sub>
+
+<br/>
+
+<sub>© 2026 CinemaXXV · Built for Pemrograman Berorientasi Objek · All rights reserved</sub>
 
 </div>
+
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:F75C7E,50:302B63,100:0F0C29&height=180&section=footer&animation=fadeIn" width="100%"/>
