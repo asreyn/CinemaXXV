@@ -69,6 +69,7 @@
 - [Tentang Proyek](#-tentang-proyek)
 - [Fitur Utama](#-fitur-utama)
 - [Alur Aplikasi](#-alur-aplikasi)
+- [Struktur Menu](#-struktur-menu)
 - [Batasan & Aturan Data](#-batasan--aturan-data)
 - [Cara Menjalankan](#-cara-menjalankan)
 - [Akun Default](#-akun-default)
@@ -230,6 +231,137 @@ flowchart TD
     F --> F5[Riwayat Pemesanan]
     F --> B
 ```
+
+---
+
+## 🧭 Struktur Menu
+
+<details open>
+<summary><b>🔑 LOGIN</b></summary>
+
+```
+LOGIN
+│
+├── SIGN UP
+│   ├── Input Username      (tidak boleh kosong, tidak boleh sama dengan "admin", tidak boleh duplikat)
+│   └── Input Password      (tidak boleh kosong)
+│
+├── SIGN IN
+│   ├── Input Username
+│   └── Input Password
+│   └── (Login admin tetap / login customer terdaftar)
+│
+└── EXIT
+```
+
+</details>
+
+<details>
+<summary><b>🛠️ ADMIN</b></summary>
+
+```
+ADMIN
+│
+├── Manajemen Film
+│   ├── Tambah Film
+│   │   ├── ID Film          (otomatis, auto increment mulai 1001)
+│   │   ├── Judul Film
+│   │   ├── Genre            (pilih: Action / Horror / Comedy / Drama / Animasi)
+│   │   ├── Rating Usia      (pilih: SU / 13+ / 17+ / 21+)
+│   │   ├── Durasi           (40-360 menit)
+│   │   └── Harga Tiket      (25.000-300.000)
+│   │
+│   ├── Edit Film
+│   │   └── Judul, Genre, Rating, Durasi, Harga (stok dihitung ulang otomatis)
+│   │
+│   ├── Hapus Film
+│   │   └── (ditolak jika film masih dipakai di suatu jadwal)
+│   │
+│   └── Lihat Daftar Film    (diurutkan berdasarkan jumlah tiket terjual)
+│
+├── Manajemen Jadwal
+│   ├── Tambah Jadwal
+│   │   ├── ID Jadwal        (otomatis, auto increment mulai 2001)
+│   │   ├── Pilih Film       (berdasarkan ID Film)
+│   │   ├── Pilih Studio     (1-3)
+│   │   ├── Tanggal Tayang   (Juni-Desember 2026, mulai 23 Juni 2026)
+│   │   ├── Jam Mulai
+│   │   └── Validasi Bentrok (cek studio + tanggal + jam tidak tumpang tindih)
+│   │
+│   ├── Edit Jadwal
+│   │   └── Studio, Tanggal, Jam Mulai (validasi bentrok ulang)
+│   │
+│   ├── Hapus Jadwal
+│   │   └── (ditolak jika sudah ada kursi/tiket terjual)
+│   │
+│   └── Lihat Jadwal
+│
+├── Manajemen Promo
+│   ├── Tambah Promo
+│   │   ├── Kode Promo       (tanpa spasi, harus unik)
+│   │   └── Besar Diskon     (1-100%)
+│   │
+│   ├── Edit Promo
+│   │   └── Diskon Baru, Status Aktif/Nonaktif
+│   │
+│   ├── Hapus Promo
+│   │
+│   └── Lihat Promo
+│
+├── Laporan Penjualan
+│   ├── Total Tiket Terjual
+│   ├── Total Transaksi
+│   ├── Total Pendapatan
+│   └── Daftar Transaksi     (ID Transaksi + Total Bayar)
+│
+└── Logout
+```
+
+</details>
+
+<details>
+<summary><b>🎟️ CUSTOMER</b></summary>
+
+```
+CUSTOMER
+│
+├── Beranda Customer
+│   └── Lihat Daftar Film
+│
+├── Reservasi Tiket
+│   ├── Pilih Jadwal         (berdasarkan ID Jadwal)
+│   ├── Validasi Kursi Tersedia
+│   ├── Pilih Jumlah Tiket
+│   ├── Lihat Layout Kursi   (5 baris A-E x 8 kolom, total 40 kursi)
+│   ├── Pilih Kursi          (format: A1, B3, dst.)
+│   └── Validasi Kursi Terisi / Duplikat
+│
+├── Pembayaran
+│   ├── Ringkasan Pesanan    (film, total tiket, total bayar)
+│   ├── Input Kode Promo     (opsional, validasi kode aktif/tidak ditemukan)
+│   ├── Hitung Diskon
+│   ├── Tampilkan QRIS       (QR dummy visual, simulasi pembayaran cashless)
+│   ├── Konfirmasi Pembayaran
+│   └── Generate ID Transaksi & Kode Tiket (otomatis)
+│
+├── Cetak Tiket
+│   ├── Ambil Transaksi Terakhir Milik User
+│   └── Tampilkan Detail Tiket (kode tiket, film, tanggal, jam, studio, kursi)
+│
+├── Riwayat Pemesanan
+│   └── Daftar Semua Transaksi Milik User (film, jumlah tiket, total bayar, metode bayar)
+│
+└── Logout
+```
+
+</details>
+
+> 📝 **Catatan Implementasi**
+> - **Metode pembayaran**: hanya QRIS (visual QR dummy, bukan generate Virtual Account/VA).
+> - **Auto increment ID**: ID Film mulai dari `1001`, ID Jadwal mulai dari `2001`.
+> - **Batas data**: maksimal 30 user, 20 film, 30 jadwal, 10 promo, 50 transaksi, 3 studio, 40 kursi per studio.
+> - **Validasi tanggal jadwal**: hanya tersedia Juni-Desember 2026, dengan Juni dibatasi mulai tanggal 23.
+> - **Reservasi sementara**: data film, jadwal, jumlah tiket, dan kursi yang dipilih disimpan sementara sebelum pembayaran, lalu di-reset setelah pembayaran selesai/dibatalkan/logout.
 
 <div align="center">
 
