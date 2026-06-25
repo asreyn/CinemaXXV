@@ -6,7 +6,6 @@ using namespace std;
 const string RESET         = "\033[0m";
 const string KUNING        = "\033[33m";
 const string KUNING_TERANG = "\033[93m";
-const string PUTIH_TERANG  = "\033[97m";
 const string MERAH         = "\033[31m";
 const string HIJAU_TERANG  = "\033[92m";
 const string BIRU          = "\033[94m";
@@ -14,7 +13,6 @@ const string COKLAT        = "\033[33m";
 const string UNGU          = "\033[35m";
 const string MERAH_JAMBU   = "\033[95m";
 const string TOSCA         = "\033[36m";
-const string HITAM         = "\033[30m";
 
 const int MAX_USER    = 30;
 const int MAX_FILM    = 20;
@@ -39,7 +37,7 @@ struct Jadwal {
     int    id;
     string tanggal, jam, jamSelesai;
     int    film, studio, mulai, selesai;
-    bool   kursi[TOTAL_KURSI];
+    bool   kursi[TOTAL_KURSI]; // digunakan untuk menyimpan status kursi ( false = kosong )
 };
 
 struct Promo {
@@ -51,19 +49,21 @@ struct Promo {
 struct Transaksi {
     string id, kodeTiket;
     int    user, jadwal, jumlahTiket;
-    int    kursi[TOTAL_KURSI];
+    int    kursi[TOTAL_KURSI]; // digunakan untuk menyimpan nomor yg dipilih customer
     long long total, diskon;
 };
 
 User      user[MAX_USER];
 Film      film[MAX_FILM];
-Jadwal    jadwal[MAX_JADWAL];
+Jadwal    jadwal[MAX_JADWAL]; // jadwal[MAX_JADWAL].id, dll
 Promo     promo[MAX_PROMO];
 Transaksi transaksi[MAX_TRX];
 
+//counter data
 int jumlahUser = 0, jumlahFilm = 0, jumlahJadwal = 0, jumlahPromo = 0, jumlahTransaksi = 0;
 int indeksUserAktif = -1;
 
+//data admin
 string adminUsn = "admin";
 string adminPsw = "admin123";
 
@@ -130,7 +130,7 @@ string toLower(string s) {
 
 // misal nk=0 (A1)
 string namaKursi(int nk) {
-    return string(1, char('A' + nk / 8)) + to_string(nk % 8 + 1);
+    return string(1, char('A' + nk / 8)) + to_string(nk % 8 + 1); // "A" + "1"
 } // mengubah nama kursi (A1, DLL)
 
 
@@ -154,6 +154,7 @@ void tampilQRCode() {
     cout << "##########  ####    ##    ####" << endl;
 }
 
+//dipakai untuk angka yang memiliki rentang nilai tertentu, misalnya jumlah tiket, diskon, durasi film, studio, tanggal, dan jam.
 int inputAngka(string prompt, int batasBawah, int batasAtas, string pesanError = "") {
     string input;
     int nilai;
@@ -184,7 +185,7 @@ int inputAngka(string prompt, int batasBawah, int batasAtas, string pesanError =
         }
         nilai = stoi(input);
         if (nilai < batasBawah || nilai > batasAtas) {
-            if (pesanError != "")
+            if (pesanError != "") // jika di argumen berisi pesan eror gunakan ini
                 cout << MERAH << pesanError << "\n" << RESET;
             else
                 cout << MERAH << "Input harus antara " << batasBawah << " - " << batasAtas << ".\n" << RESET;
@@ -289,7 +290,7 @@ bool cekBentrok(int studio, string tanggal, int waktuMulaiBaru, int waktuSelesai
         if (i == kecuali) continue;
         if (jadwal[i].studio == studio && jadwal[i].tanggal == tanggal)
             if (waktuMulaiBaru < jadwal[i].selesai && jadwal[i].mulai < waktuSelesaiBaru)
-                return true; // mulai baru di cek dengan selesai lama
+                return true; // mulai baru di cek dengan selesai lama ( true = bentrok)
     }
     return false;
 }
@@ -331,12 +332,12 @@ void inputTanggalDanJam(int &bln, int &tgl, int &jamH, int &jamM) {
     if (bln == -1) return; // ketika user mengetik exit
 
     int maxHari = maxHariBulan(bln);
-    int minHari = (bln == 6) ? 23 : 1; // jika bulan 6 = 23, selain itu 1
+    int minHari = (bln == 6) ? 25 : 1; // jika bulan 6 = 25, selain itu 1
     string promptTgl = (bln == 6)
         ? "Tanggal (" + to_string(minHari) + "-" + to_string(maxHari) + ")  : "
-        : "Tanggal (1-" + to_string(maxHari) + ")     : "; // Tanggal (23 - 30)
+        : "Tanggal (1-" + to_string(maxHari) + ")     : "; // Tanggal (25 - 30)
     string errorTgl = (bln == 6)
-        ? "Jadwal hanya dapat dibuat mulai 23 Juni 2026."
+        ? "Jadwal hanya dapat dibuat mulai 25 Juni 2026."
         : "Tanggal tidak sesuai dengan jumlah hari pada bulan yang dipilih.";
 
     tgl = inputAngka(promptTgl, minHari, maxHari, errorTgl);
@@ -381,10 +382,7 @@ void signUp() {
     else if (cariUser(username) != -1)
         cout << MERAH << "Username sudah digunakan.\n" << RESET;
 
-    } while (username.empty() ||
-         username.find(' ') != string::npos ||
-         toLower(username) == toLower(adminUsn) ||
-         cariUser(username) != -1);
+    } while (username.empty() || username.find(' ') != string::npos || toLower(username) == toLower(adminUsn) || cariUser(username) != -1);
 
     do {
     cout << "Password : ";
@@ -401,8 +399,7 @@ void signUp() {
     else if (password.empty())
         cout << MERAH << "Password tidak boleh kosong.\n" << RESET;
 
-    } while (password.empty() ||
-         password.find(' ') != string::npos);
+    } while (password.empty() || password.find(' ') != string::npos);
 
     user[jumlahUser].username = username;
     user[jumlahUser].password = password;
@@ -412,6 +409,7 @@ void signUp() {
     pause();
 }
 
+// menggunakan tipe data int karena mengembalikan kode status login
 int signIn() {
     header("    S I G N  I N");
     string username, password;
@@ -425,7 +423,7 @@ int signIn() {
         cout << MERAH << "Username tidak boleh mengandung spasi.\n" << RESET;
         continue; }
 
-        if (toLower(username) == "exit") { cout << "\nSign in dibatalkan.\n"; pause(); return 0; }
+        if (toLower(username) == "exit") { cout << "\nSign in dibatalkan.\n"; pause(); return 0; } // 0 untuk login batal
 
         cout << "Password : ";
         getline(cin >> ws, password);
@@ -437,14 +435,14 @@ int signIn() {
 
         if (username == adminUsn && password == adminPsw) {
             cout << HIJAU_TERANG << "\nLogin admin berhasil.\n" << RESET;
-            pause(); return 1;
+            pause(); return 1; //login sebagai admin
         }
 
         int indeks = cariUser(username);
         if (indeks != -1 && toLower(user[indeks].password) == toLower(password)) {
             indeksUserAktif = indeks;
             cout << HIJAU_TERANG << "\nSelamat datang, " << user[indeks].username << "!\n" << RESET;
-            pause(); return 2;
+            pause(); return 2; //login sebagai customer
         }
 
         cout << MERAH << "\nUsername atau password salah, silakan coba lagi.\n" << RESET;
@@ -454,6 +452,7 @@ int signIn() {
 
 // ===================== MANAJEMEN FILM =====================
 
+// dipanggil saat Beranda Customer, Tambah Jadwal, Edit Film, Hapus Film, Lihat Film
 void tampilFilm() {
     if (jumlahFilm == 0) { cout << MERAH << "\nBelum ada film.\n" << RESET; return; }
     garis();
@@ -521,8 +520,11 @@ void tambahFilm() {
     if (hargaInt == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
     f.harga = hargaInt;
 
-    f.stok = TOTAL_KURSI; f.terjual = 0;
-    film[jumlahFilm++] = f;
+    // set setiap film baru memiliki kapasitas kursi maks 40
+    f.stok = TOTAL_KURSI;
+    f.terjual = 0;
+    // menambah jumlah film dan juga data film
+    film[jumlahFilm++] = f; // menampung sekalian di f tanpa perlu satu satu
     idFilmBerikutnya++;
     cout << HIJAU_TERANG << "\nFilm berhasil ditambahkan.\n" << RESET;
     pause();
@@ -562,6 +564,7 @@ void editFilm() {
     int hargaBaruInt = inputAngka("Harga Baru (25000-300000) : ", 25000, 300000);
     if (hargaBaruInt == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
 
+    // mengganti data baru
     film[indeks].judul  = judulBaru;  film[indeks].genre  = genreBaru;
     film[indeks].rating = ratingBaru; film[indeks].durasi = durasiBaru;
     film[indeks].harga  = hargaBaruInt;
@@ -591,7 +594,7 @@ void hapusFilm() {
 
     bool dipakai = false;
     for (int i = 0; i < jumlahJadwal; i++)
-        if (jadwal[i].film == indeks) { dipakai = true; break; }
+        if (jadwal[i].film == indeks) { dipakai = true; break; } // cek jadwal yang terdaftar
     if (dipakai) {
         cout << MERAH << "\nFilm masih digunakan pada suatu jadwal, hapus jadwalnya terlebih dahulu.\n" << RESET;
         pause(); return;
@@ -608,13 +611,6 @@ void hapusFilm() {
 
 void tampilFilmTerjual() {
     if (jumlahFilm == 0) { cout << MERAH << "\nBelum ada film.\n" << RESET; return; }
-    int urut[MAX_FILM];
-    for (int i = 0; i < jumlahFilm; i++) urut[i] = i;
-    for (int i = 0; i < jumlahFilm - 1; i++)
-        for (int j = i + 1; j < jumlahFilm; j++)
-            if (film[urut[j]].terjual > film[urut[i]].terjual) {
-                int tmp = urut[i]; urut[i] = urut[j]; urut[j] = tmp;
-            } // mengurutkan indeks film terjual
     garis();
     cout << left << setw(8)  << "ID"
                  << MERAH_JAMBU << setw(20) << "Judul" << RESET
@@ -625,14 +621,13 @@ void tampilFilmTerjual() {
                  << HIJAU_TERANG << "Terjual" << RESET << endl;
     garis();
     for (int i = 0; i < jumlahFilm; i++) {
-        int k = urut[i];
-        cout << left << setw(8)  << film[k].id
-                     << setw(20) << film[k].judul
-                     << setw(10) << film[k].genre
-                     << setw(8)  << film[k].durasi
-                     << setw(8)  << film[k].rating
-                     << setw(10) << film[k].harga
-                     << film[k].terjual << endl;
+        cout << left << setw(8)  << film[i].id
+                     << setw(20) << film[i].judul
+                     << setw(10) << film[i].genre
+                     << setw(8)  << film[i].durasi
+                     << setw(8)  << film[i].rating
+                     << setw(10) << film[i].harga
+                     << film[i].terjual << endl;
     }
     garis();
 }
@@ -718,10 +713,11 @@ void tambahJadwal() {
         j.selesai  = j.mulai + film[indeksFilm].durasi + 15;
         j.jamSelesai = menitKeJam(j.selesai);
 
-        bentrok = cekBentrok(j.studio, j.tanggal, j.mulai, j.selesai, -1);
-        if (bentrok)
-            cout << MERAH << "\nJadwal bentrok dengan jadwal lain di studio yang sama, silakan masukkan tanggal/jam lain.\n" << RESET;
-    } while (bentrok);
+          bentrok = cekBentrok(j.studio, j.tanggal, j.mulai, j.selesai, -1);
+          if (bentrok)
+              cout << MERAH << "\nJadwal bentrok dengan jadwal lain di studio yang sama, silakan masukkan tanggal/jam lain.\n" << RESET;
+      } while (bentrok);
+
 
     for (int i = 0; i < TOTAL_KURSI; i++) j.kursi[i] = false;
     jadwal[jumlahJadwal++] = j; // tanggal akan disimpan disini
@@ -738,10 +734,12 @@ void editJadwal() {
     cout << MERAH << "(ketik 'exit' untuk batal)\n" << RESET;
     int id, indeks;
     do {
+        // id disimpan disini ges
         id = inputID("\nMasukkan ID Jadwal : ");
         if (id == -1) { cout << "\nDibatalkan.\n"; pause(); return; }
 
-        indeks = cariJadwal(id);
+        //indeks disimpan disini, dari return function cari jadwal
+        indeks = cariJadwal(id); // mencari dengan function, berdasarkan id
         if (indeks == -1)
             cout << MERAH << "Jadwal dengan ID tersebut tidak ditemukan, silakan coba lagi.\n" << RESET;
     } while (indeks == -1);
@@ -944,7 +942,7 @@ void hapusPromo() {
             cout << MERAH << "Promo dengan kode tersebut tidak ditemukan, silakan coba lagi.\n" << RESET;
     } while (indeks == -1);
 
-    for (int i = indeks; i < jumlahPromo - 1; i++) promo[i] = promo[i + 1];
+    for (int i = indeks; i < jumlahPromo - 1; i++) promo[i] = promo[i + 1]; // sistemnya geser ke kiri
     jumlahPromo--;
     cout << HIJAU_TERANG << "\nPromo berhasil dihapus.\n" << RESET;
     pause();
@@ -1015,9 +1013,9 @@ void tampilKursi(int indeks) {
     garis();
     for (int baris = 0; baris < 5; baris++) { // baris kursi
         cout << "  " << (char)('A' + baris) << "  ";
-        for (int kolom = 0; kolom < 8; kolom++) {
-            int nomorKursi = baris * 8 + kolom;
-            if (jadwal[indeks].kursi[nomorKursi]) cout << MERAH << "[X]" << RESET;
+        for (int kolom = 0; kolom < 8; kolom++) { // setiap baris akan dibuat 8 kursi
+            int nomorKursi = baris * 8 + kolom; // nomor kursi 0 - 39
+            if (jadwal[indeks].kursi[nomorKursi]) cout << MERAH << "[X]" << RESET; // klo true = terisi
             else cout << HIJAU_TERANG << "[O]" << RESET;
         }
         cout << endl;
@@ -1040,6 +1038,7 @@ void reservasiTiket() {
     do {
         id = inputID("\nID Jadwal : ");
         if (id == -1) { cout << "\nReservasi dibatalkan.\n"; pause(); return; }
+        // return -1 dari input id jika user menginput "exit"
 
         indeks = cariJadwal(id);
         if (indeks == -1)
@@ -1048,7 +1047,7 @@ void reservasiTiket() {
 
     int kursiTersedia = 0;
     for (int i = 0; i < TOTAL_KURSI; i++)
-        if (!jadwal[indeks].kursi[i]) kursiTersedia++;
+        if (!jadwal[indeks].kursi[i]) kursiTersedia++; // cek kalo !false nambah
     if (kursiTersedia == 0) {
         cout << MERAH << "\nMaaf, kursi pada jadwal ini sudah penuh.\n" << RESET;
         pause(); return;
